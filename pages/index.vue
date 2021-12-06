@@ -6,11 +6,12 @@
       <h2 class="subtitle">That Are So Bad And So Funny!</h2>
       <div class="links">
         <nuxt-link
-          :key="post.id"
+          :key="post.slug"
           v-for="post in posts"
-          :to="{name: 'posts-id', params: {id: post.id}}"
+          :to="{ name: 'posts-slug', params: { slug: post.slug } }"
           class="button--grey"
-        >{{post.title}}</nuxt-link>
+          >{{ post.title }}</nuxt-link
+        >
       </div>
     </div>
   </div>
@@ -18,27 +19,44 @@
 
 <script>
 import Logo from "~/components/Logo.vue";
+import Vuex, { mapActions } from "vuex";
+import Vue from "vue";
+Vue.use(Vuex);
 
 export default {
   components: {
-    Logo
+    Logo,
+  },
+  async asyncData({ store }) {
+    await store.dispatch("posts/getPosts");
   },
   head() {
     return {
       title: "Welcome to DAD joke land",
       meta: [
         { name: "twitter:title", content: "Welcome to DAD joke land" },
-        { name: "twitter:description", content: "Best Dad jokes on the internet" },
+        {
+          name: "twitter:description",
+          content: "Best Dad jokes on the internet",
+        },
         { name: "twitter:image", content: "https://i.imgur.com/UYP2umJ.png" },
-        { name: "twitter:card", content: "summary_large_image" }
-      ]
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
     };
   },
   computed: {
     posts() {
       return this.$store.state.posts.all;
-    }
-  }
+    },
+  },
+  // created() {
+  //   this.getPosts();
+  // },
+  methods: {
+    ...mapActions("posts", {
+      getPosts: "getPosts",
+    }),
+  },
 };
 </script>
 
